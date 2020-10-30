@@ -36,5 +36,5 @@ def jwt_decode(data):
 
 
 if __name__ == "__main__":
-    a = jwt.encode({'some': 'passyload'}, private_key, algorithm='RS256')
+    a = jwt.encode({'some': 'passyload', "da": 2323}, private_key, algorithm='RS256')
     print(jwt.decode(a, public_key, algorithms='RS256'))

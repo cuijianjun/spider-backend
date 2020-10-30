@@ -13,7 +13,7 @@ from spider.util.auth import uniform_verification
 def check_jwt_token(data):
     try:
         dic = jwt_decode(data)
-        if time() - dic["time"] > 24 * 60 * 60:
+        if time() - dic["time"] > int(dic["expires"]):
             raise ServerException(3000)
     except:
         raise ServerException(3001)
@@ -21,17 +21,18 @@ def check_jwt_token(data):
 
 @xyz_api.resource('/generate_code')
 class ImageGenerateCode(Resource):
+    get_parser = RequestParser()
+    get_parser.add_argument('expires', type=int, default=24*60*60)
 
     @uniform_verification()
     def get(self):
+        args = self.get_parser.parse_args()
         token = jwt_encode({
-            "time": time()
+            "time": time(),
+            "expires": args["expires"]
         })
         return {"token": token.decode()}
 
-"""
-eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0aW1lIjoxNjAxNjIzOTczLjMzNzc5Mn0.vcSePN35Kdt3uNqGLHPL73qXi_oxLndP1AbJfSpQR2vW4W_8VaL6NpeswKbYMATAjhqgh0TBnkopw5b_Dny6g82rQWVnj6KwE4p_aRVOwEUH_qsGFfb64IYiZtvHuXKLU6X3t77FYZGCGtUUhtB978CE-ABE8N_BKzWIGs0mpjs
-"""
 
 @xyz_api.resource('/class_list')
 class ClassListApi(Resource):
