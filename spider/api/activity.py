@@ -13,7 +13,7 @@ from spider.util.auth import uniform_verification
 def check_jwt_token(data):
     try:
         dic = jwt_decode(data)
-        if time() - dic["time"] > int(dic["expires"]):
+        if time() - dic["time"] > int(dic.get("expires", 24 * 60 * 60)):
             raise ServerException(3000)
     except:
         raise ServerException(3001)
